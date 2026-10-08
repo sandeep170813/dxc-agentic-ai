@@ -1,4 +1,4 @@
-# Lab 2, Part C: your first RAG app (AskIT)
+# Lab 2, Part C: your first RAG app (AskIT) — Azure AI Foundry edition
 
 **AskIT today:** reads the Orbit Corp IT knowledge base, finds the right article for a question, and answers from it, with sources, or "I couldn't find that".
 You built embeddings and an index in Parts A and B. This app wires them to an LLM so you can run real experiments.
@@ -17,7 +17,20 @@ cd Day03\Labs\lab02-askit-rag-app
 python -m streamlit run app.py
 ```
 The app opens at http://localhost:8501. **AWS Bedrock is the default** (Nova for answers, Titan for embeddings) and uses the same `.env` as the earlier labs.
-*Bedrock not working?* Paste an OpenAI key in the sidebar (backup) and choose **OpenAI only**.
+*Bedrock not working?* Choose **Azure Foundry only** (keys in the course `.env`, see below) or paste an OpenAI key in the sidebar and choose **OpenAI only**.
+
+### Azure AI Foundry
+Add to the course `.env` (same place as the AWS keys; template in `.env.example`):
+```
+AZURE_OPENAI_API_KEY=...
+AZURE_OPENAI_ENDPOINT=https://<your-resource>.services.ai.azure.com
+AZURE_OPENAI_CHAT_DEPLOYMENTS=gpt-5.6-luna-1,Kimi-K2.5
+AZURE_OPENAI_EMBED_DEPLOYMENT=
+```
+- **Embeddings:** leave `AZURE_OPENAI_EMBED_DEPLOYMENT` empty and the app embeds locally on your laptop (fastembed, `bge-small`, ~130 MB downloaded on first use). Set it to an Azure embedding deployment to use Azure instead.
+- **Change the chat model:** pick another deployment in the sidebar (**Azure Foundry chat model**), or choose *other* and type any deployment name from your Foundry project. No restart needed.
+- To make a model appear in the list permanently, add its deployment name to `AZURE_OPENAI_CHAT_DEPLOYMENTS`.
+- Model = **deployment name**, not the base model name.
 
 ## Step 1: Run it
 1. In the sidebar click **Load AskIT KB (20 articles)**. Wait for the green message.
@@ -46,7 +59,7 @@ The app opens at http://localhost:8501. **AWS Bedrock is the default** (Nova for
 |---|---|---|
 | Extract | Pull text from the file | `extract_text()` |
 | Chunk | Split into overlapping pieces | `chunk_text()` |
-| Embed | Turn each chunk into a vector (Titan) | `embed()` |
+| Embed | Turn each chunk into a vector (Titan / Azure / OpenAI) | `embed()` |
 | Store | Save vectors in a local file (`vector_store\` folder, not pushed) | `ingest()` |
 | Retrieve | Embed the question, find the Top-K nearest chunks | `retrieve()` |
 | Generate | Send question + chunks to the model with a grounding prompt | `generate()` |
@@ -55,7 +68,9 @@ The app opens at http://localhost:8501. **AWS Bedrock is the default** (Nova for
 | Symptom | Fix |
 |---|---|
 | `streamlit` not recognised | Use `python -m streamlit run app.py` (and run the `python -m pip install` line again) |
-| Page says "No provider available" | The course `.env` is missing the AWS keys or `BEDROCK_SMALL_MODEL_ID`. Fix it, restart the app. Or paste an OpenAI key |
+| Page says "No provider available" | The course `.env` is missing the AWS keys / `BEDROCK_SMALL_MODEL_ID` / `AZURE_OPENAI_*` values. Fix it, restart the app. Or paste an OpenAI key |
+| Azure `404 DeploymentNotFound` | The name in the sidebar is not a deployment in your Foundry resource. Copy it exactly from Foundry → Deployments |
+| Azure `401` | Wrong `AZURE_OPENAI_API_KEY` or endpoint for that resource |
 | `ThrottlingException` / `429` | The whole class is calling at once. The app retries by itself: wait a few seconds |
 | `AccessDeniedException` | The model is not enabled for your user: tell the trainer |
 | Mini eval says "Load the AskIT KB first" | Click **Load AskIT KB** in the sidebar |
