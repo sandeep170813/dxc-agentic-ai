@@ -75,9 +75,7 @@ Don't fix anything. Keep this chat open for Step C.
 2. Send it. Copilot saves the spec as `sdd\SPEC.md` and builds `sdd\triage.py` from it.
 
 ```
-Save the spec below as sdd/SPEC.md, then implement sdd/triage.py strictly from it. Do not add behaviour that is not in the spec.
-If anything is ambiguous, ask me before coding.
-Also write sdd/test_spec.py with one test per Acceptance Criterion (AC).
+ī
 
 # SPEC: AskIT Ticket Triage v1
 
