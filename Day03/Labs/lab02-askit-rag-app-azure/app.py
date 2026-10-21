@@ -16,6 +16,8 @@ import streamlit as st
 from docx import Document
 from dotenv import dotenv_values, load_dotenv
 from pypdf import PdfReader
+# from fastembed import TextEmbedding
+
 
 # the course .env (AWS keys, Bedrock model id): search upward from this file, then the current folder
 _envs = [d / ".env" for d in Path(__file__).resolve().parents if (d / ".env").is_file()]
